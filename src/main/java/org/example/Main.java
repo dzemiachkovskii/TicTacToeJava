@@ -4,7 +4,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
-    public static int SIZE = 4;
+    public static int SIZE = 5;
     public static int DOTS_TO_WIN = 3;
     public static final char DOT_EMPTY = '•';
     public static final char DOT_X = 'X';
@@ -98,58 +98,60 @@ public class Main {
     }
 
     public static boolean checkWin(char c) {
-        int dotsInRow = 0;
+        int dotsInRow;
 
         // Горизонтали
         for (int i = 0; i < SIZE; i++) {
+            dotsInRow = 0;
             for (int j = 0; j < SIZE; j++) {
                 if (map[i][j] == c) {
                     dotsInRow++;
-                    if (dotsInRow >= DOTS_TO_WIN) break;
+                    if (dotsInRow >= DOTS_TO_WIN) return true;
                 } else {
                     dotsInRow = 0;
                 }
-            }
-            if (dotsInRow >= DOTS_TO_WIN) {
-                return true;
-            } else {
-                dotsInRow = 0;
             }
         }
 
         // Вертикали
         for (int i = 0; i < SIZE; i++) {
+            dotsInRow = 0;
             for (int j = 0; j < SIZE; j++) {
                 if (map[j][i] == c) {
                     dotsInRow++;
-                    if (dotsInRow >= DOTS_TO_WIN) break;
+                    if (dotsInRow >= DOTS_TO_WIN) return true;
                 } else {
                     dotsInRow = 0;
                 }
             }
-            if (dotsInRow >= DOTS_TO_WIN) {
-                return true;
-            } else {
-                dotsInRow = 0;
-            }
         }
 
-        // Главная диагональ
-        for (int i = 0; i < SIZE; i++) {
-            if (map[i][i] != c) {
-                dotsInRow++;
-                if (dotsInRow >= DOTS_TO_WIN) break;
-            } else {
-                dotsInRow = 0;
-            }
-        }
-        if (dotsInRow >= DOTS_TO_WIN) {
-            return true;
-        } else {
+        // Главная диагональ и параллельные линии со сдвигом
+        for (int shift = 0; shift < SIZE - DOTS_TO_WIN + 1; shift++) {
+            // Сдвиг вправо-вверх
             dotsInRow = 0;
+            for (int i = 0; i + shift < SIZE; i++) {
+                if (map[i][i + shift] == c) {
+                    dotsInRow++;
+                    if (dotsInRow >= DOTS_TO_WIN) return true;
+                } else {
+                    dotsInRow = 0;
+                }
+            }
+            // Сдвиг влево-вниз
+            dotsInRow = 0;
+            for (int i = 0; i + shift < SIZE; i++) {
+                if (map[i + shift][i] == c) {
+                    dotsInRow++;
+                    if (dotsInRow >= DOTS_TO_WIN) return true;
+                } else {
+                    dotsInRow = 0;
+                }
+            }
         }
 
         // Побочная диагональ
+        dotsInRow = 0;
         for (int i = 0; i < SIZE; i++) {
             if (map[i][SIZE - i - 1] == c) {
                 dotsInRow++;
@@ -158,7 +160,6 @@ public class Main {
                 dotsInRow = 0;
             }
         }
-        if (dotsInRow >= DOTS_TO_WIN) return true;
         return false;
     }
 }
