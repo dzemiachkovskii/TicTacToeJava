@@ -1,17 +1,18 @@
 package org.example;
 
-import java.util.Random;
+import java.awt.*;
+import java.lang.reflect.Type;
+import java.sql.Array;
 import java.util.Scanner;
 
 public class Main {
-    public static int SIZE = 5;
+    public static int SIZE = 3;
     public static int DOTS_TO_WIN = 3;
     public static final char DOT_EMPTY = '•';
     public static final char DOT_X = 'X';
     public static final char DOT_O = 'O';
     public static char[][] map;
     public static Scanner sc = new Scanner(System.in);
-    public static Random rand = new Random();
 
     public static void main(String[] args) {
         initMap();
@@ -76,10 +77,23 @@ public class Main {
 
     public static void aiTurn() {
         int x, y;
-        do {
-            x = rand.nextInt(SIZE);
-            y = rand.nextInt(SIZE);
-        } while (!isCellValid(x, y));
+        x = 2;
+        y = 2;
+        class Coordinates {
+            final int x;
+            final int y;
+
+            Coordinates(int x, int y) {
+                this.x = x;
+                this.y = y;
+            }
+        }
+        var userDots = new List(2, false);
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                System.out.println("idk");
+            }
+        }
         map[x][y] = DOT_O;
     }
 
@@ -107,9 +121,7 @@ public class Main {
                 if (map[i][j] == c) {
                     dotsInRow++;
                     if (dotsInRow >= DOTS_TO_WIN) return true;
-                } else {
-                    dotsInRow = 0;
-                }
+                } else dotsInRow = 0;
             }
         }
 
@@ -120,44 +132,47 @@ public class Main {
                 if (map[j][i] == c) {
                     dotsInRow++;
                     if (dotsInRow >= DOTS_TO_WIN) return true;
-                } else {
-                    dotsInRow = 0;
-                }
+                } else dotsInRow = 0;
             }
         }
 
         // Главная диагональ и параллельные линии со сдвигом
         for (int shift = 0; shift < SIZE - DOTS_TO_WIN + 1; shift++) {
-            // Сдвиг вправо-вверх
+            // Сдвиг вправо
             dotsInRow = 0;
             for (int i = 0; i + shift < SIZE; i++) {
                 if (map[i][i + shift] == c) {
                     dotsInRow++;
                     if (dotsInRow >= DOTS_TO_WIN) return true;
-                } else {
-                    dotsInRow = 0;
-                }
+                } else dotsInRow = 0;
             }
-            // Сдвиг влево-вниз
+            // Сдвиг вниз
             dotsInRow = 0;
             for (int i = 0; i + shift < SIZE; i++) {
                 if (map[i + shift][i] == c) {
                     dotsInRow++;
                     if (dotsInRow >= DOTS_TO_WIN) return true;
-                } else {
-                    dotsInRow = 0;
-                }
+                } else dotsInRow = 0;
             }
         }
 
-        // Побочная диагональ
-        dotsInRow = 0;
-        for (int i = 0; i < SIZE; i++) {
-            if (map[i][SIZE - i - 1] == c) {
-                dotsInRow++;
-                if (dotsInRow >= DOTS_TO_WIN) break;
-            } else {
-                dotsInRow = 0;
+        // Побочная диагональ и параллельные линии со сдвигом
+        for (int shift = 0; shift < SIZE - DOTS_TO_WIN + 1; shift++) {
+            // Сдвиг вниз
+            dotsInRow = 0;
+            for (int i = 0; i + shift < SIZE; i++) {
+                if (map[i + shift][SIZE - i - 1] == c) {
+                    dotsInRow++;
+                    if (dotsInRow >= DOTS_TO_WIN) return true;
+                } else dotsInRow = 0;
+            }
+            // Сдвиг влево
+            dotsInRow = 0;
+            for (int i = 0; i < SIZE && SIZE - (1 + i + shift) >= 0; i++) {
+                if (map[i][SIZE - (1 + i + shift)] == c) {
+                    dotsInRow++;
+                    if (dotsInRow >= DOTS_TO_WIN) return true;
+                } else dotsInRow = 0;
             }
         }
         return false;
